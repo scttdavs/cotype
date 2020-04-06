@@ -12,6 +12,7 @@
     "@types/react-dom": "^16.9.6",
     "codemirror": "^5.52.2",
     "peer": "^0.5.2",
+    "peerjs": "^1.2.0",
     "react": "^16.13.1",
     "react-codemirror2": "^7.1.0",
     "react-dom": "^16.13.1",
