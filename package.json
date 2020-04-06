@@ -10,13 +10,15 @@
     "@types/node": "^12.12.34",
     "@types/react": "^16.9.32",
     "@types/react-dom": "^16.9.6",
+    "peer": "^0.5.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm run signal-start & react-scripts start",
+    "signal-start": "peerjs --port 9000 --key peerjs --path /signal",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
