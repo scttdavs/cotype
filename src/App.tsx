@@ -54,6 +54,7 @@ function App() {
         theme: 'material',
         lineNumbers: true
       }}
+      editorDidMount={(editor) => { console.log(editor) }}
       onChange={(editor, data, value) => {
       }}
     />
