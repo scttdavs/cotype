@@ -12,7 +12,19 @@ export default class PeerClient {
             host: "/",
             port: 9000,
             path: '/signal',
-            debug: 2
+            debug: 2,
+            config: {
+                iceServers:[
+                    {
+                        urls: 'stun:stun1.l.google.com:19302'
+                    },
+                    {
+                        urls: 'turn:numb.viagenie.ca',
+                        credential: 'conclave-rulez',
+                        username: 'sunnysurvies@gmail.com'
+                    }
+                ]
+            }
         });
         this.docInitiatorId = window.location.pathname.slice(1);
         console.log("Doc id", this.docInitiatorId);
@@ -23,6 +35,7 @@ export default class PeerClient {
 
     onOpen(id: string) {
         this.myId = id;
+        console.log("My id", this.myId);
   
         if (this.docInitiatorId !== "") {
             // if in an existing doc, connect to the initiator
@@ -36,24 +49,21 @@ export default class PeerClient {
             });
 
             // this our first new peer, so add it
-            this.addPeer(conn);
 
             // console.log(conn);
-            // conn.on('open', () => {
-            //     console.log("Open to ", roomId);
-            //     conn.send("HI!");
-            // });
+            conn.on('open', () => {
+                console.log("opening 1");
+                this.addPeer(conn);
+            });
     
             // TODO clean up on 'close', etc?
         }
     }
 
     // receiving data from someone
-    onData(data: string) {
-        const dataObj = JSON.parse(data);
-        console.log('Received', data);
-
-        if (dataObj.type === "syncResponse") {
+    onData(data: any) {
+        console.log(data);
+        if (data.type === "syncResponse") {
             // receiving sync response from initiator
             // TODO save peers
             // const conn = this.peer.connect(id, {});
@@ -62,7 +72,8 @@ export default class PeerClient {
     }
 
     addPeer(conn: Peer.DataConnection) {
-        this.peers.push(conn);
+        this.peers.push(conn); // need to dedupe
+        console.log("adding Peer");
         conn.on('data', this.onData.bind(this));
     }
 
@@ -74,11 +85,14 @@ export default class PeerClient {
 
         if (conn.metadata.sync) {
             // TODO send editor data also
-            conn.send(JSON.stringify({
-                type: 'syncResponse',
-                peers: this.peers.map(p => p.peer)
-                // TODO send back bootstrap data to this connection
-            }));
+            conn.on('open', () => {
+                console.log("opening 2");
+                conn.send({
+                    type: 'syncResponse',
+                    peers: this.peers.map(p => p.peer)
+                    // TODO send back bootstrap data to this connection
+                });
+            })
         }
     }
 }
