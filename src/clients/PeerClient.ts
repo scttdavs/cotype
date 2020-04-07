@@ -49,12 +49,7 @@ export default class PeerClient {
             });
 
             // this our first new peer, so add it
-
-            // console.log(conn);
-            conn.on('open', () => {
-                console.log("opening 1");
-                this.addPeer(conn);
-            });
+            this.addPeer(conn);
     
             // TODO clean up on 'close', etc?
         }
@@ -84,9 +79,7 @@ export default class PeerClient {
         this.addPeer(conn);
 
         if (conn.metadata.sync) {
-            // TODO send editor data also
             conn.on('open', () => {
-                console.log("opening 2");
                 conn.send({
                     type: 'syncResponse',
                     peers: this.peers.map(p => p.peer)
